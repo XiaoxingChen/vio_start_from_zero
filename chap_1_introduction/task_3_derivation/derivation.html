@@ -1,0 +1,77 @@
+<head>
+    <script type="text/javascript" async 
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+</head>
+<body>
+    <h2>3. 其他导数</h2>
+    <p>使用右乘\(\mathfrak{so}(3)\)，推导以下导数：</p>
+    \[
+        \rm \frac{d(R^{-1}p)}{dR} \tag{19}
+    \]
+
+    \[
+        \rm \frac{dln(R_1 R_2^{-1})}{dR_2} \tag{20}
+    \]
+    <h3>3.1.</h3>
+    <p>设\(\rm R\)对应的李代数为\(\rm \phi\)</p>
+    \[
+        \rm R = exp(\phi^ \wedge) 
+    \]
+    \[
+        \rm R^T = exp(-\phi^ \wedge) 
+    \]
+
+    <p>设\(\rm \Delta R\)对应的李代数为\(\rm \varphi\),则：</p>
+
+    \[
+        \rm \frac{d(R^{-1}p)}{dR} = 
+        \lim_{\varphi \rightarrow 0}
+        \frac{exp(-\phi^ \wedge)exp(\varphi^ \wedge)p - exp(-\phi^ \wedge)p}{\varphi}
+    \]
+    \[
+        \rm = \lim_{\varphi \rightarrow 0}
+        \frac{exp(-\phi^ \wedge)\left(exp(\varphi^ \wedge) - I\right)p}{\varphi}
+    \]
+    \[
+        \rm \because 
+         
+        exp(\varphi^ \wedge)
+        = I + \varphi^ \wedge + O(\varphi^ \wedge)
+    \]
+    \[
+        \rm \therefore
+        \frac{d(R^{-1}p)}{dR} = 
+        \lim_{\varphi \rightarrow 0}
+        \frac{exp(-\phi^ \wedge)\varphi^ \wedge p}{\varphi}    
+        = \lim_{\varphi \rightarrow 0}
+        \frac{-exp(-\phi^ \wedge)p^ \wedge \varphi}{\varphi}    
+    \]
+    \[
+        \rm \therefore
+        \frac{d(R^{-1}p)}{dR} = -Rp^ \wedge
+    \]
+
+    <h3>3.2.</h3>
+    <p>根据第一节课程资料中，公式(16)已知：</p>
+    \[
+        \rm \frac{dln(R_1 R_2)}{dR_2} = 
+        J_r^{-1}\left(ln(R_1 R_2) ^ \vee\right) \tag{16}
+    \]
+    <p>记\(R_3 = R_1 R_2^{-1} R_2^{-1}\)</p>
+    \[
+        \rm \because R_1 R_2^{-1} = (R_1 R_2^{-1} R_2^{-1}) R_2 = R_3 R_2
+    \]
+
+    \[
+        \rm \frac{dln(R_1 R_2^{-1})}{dR_2} = 
+        \frac{dln(R_3 R_2)}{dR_2} =
+        J_r^{-1}\left(ln(R_3 R_2) ^ \vee\right)
+    \]
+    \[
+        \rm \therefore \frac{dln(R_1 R_2^{-1})}{dR_2} = J_r^{-1}\left(ln(R_1 R_2^{-1}) ^ \vee\right)
+    \]
+    
+
+
+</body>
