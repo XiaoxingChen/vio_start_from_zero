@@ -16,12 +16,10 @@ int main()
     {
         orientation_in_mat = update_in_mat * orientation_in_mat;
         orientation_in_quat = update_in_quat * orientation_in_quat;
-        std::cout << "ori in quat: " << orientation_in_quat.coeffs().transpose() << "\t\t";
-        std::cout << "ori in mat: " << Eigen::Quaterniond(orientation_in_mat).coeffs().transpose();
-        std::cout << std::endl;
-        
+        std::cout << "step" << i << ": ";
+        std::cout << "quat: " << orientation_in_quat.coeffs().transpose() << "\t\t";
+        std::cout << "mat: " << Eigen::Quaterniond(orientation_in_mat).coeffs().transpose();
+        std::cout << std::endl;  
     }
-
-
     return 0;
 }
