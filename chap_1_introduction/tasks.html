@@ -1,0 +1,117 @@
+<head>
+    <script type="text/javascript" async 
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+</head>
+<body>
+    <h2>3. 其他导数</h2>
+    <p>使用右乘\(\mathfrak{so}(3)\)，推导以下导数：</p>
+    \[
+        \rm \frac{d(R^{-1}p)}{dR} \tag{19}
+    \]
+
+    \[
+        \rm \frac{dln(R_1 R_2^{-1})}{dR_2} \tag{20}
+    \]
+    <h3>3.1.</h3>
+    <p>设\(\rm R\)对应的李代数为\(\rm \phi\)</p>
+    \[
+        \rm R = exp(\phi^ \wedge) 
+    \]
+    \[
+        \rm R^T = exp(-\phi^ \wedge) 
+    \]
+
+    <p>设\(\rm \Delta R\)对应的李代数为\(\rm \varphi\),则：</p>
+
+    \[
+        \rm \frac{d(R^{-1}p)}{dR} = 
+        \lim_{\varphi \rightarrow 0}
+        \frac{\left[R exp(\varphi^ \wedge)\right]^T p - R^Tp}{\varphi}
+    \]
+    \[
+        \rm = \lim_{\varphi \rightarrow 0}
+        \frac{\left[R exp(\varphi^ \wedge)R^T R\right]^T p - R^Tp}{\varphi}
+    \]
+    \[
+        \rm = \lim_{\varphi \rightarrow 0}
+        \frac{R^T exp\left(-(R\varphi)^ \wedge\right) p - R^Tp}{\varphi}
+    \]
+
+    \[
+        \rm = \lim_{\varphi \rightarrow 0}
+        \frac{R^T [I - (R\varphi)^\wedge] p - R^Tp}{\varphi}
+    \]
+
+    \[
+        \rm = \lim_{\varphi \rightarrow 0}
+        \frac{ -R^T(R\varphi)^\wedge p}{\varphi}
+    \]
+
+    \[
+        \rm = \lim_{\varphi \rightarrow 0}
+        \frac{ R^Tp^\wedge(R\varphi) }{\varphi}
+    \]
+
+    \[
+        \rm \therefore
+        \frac{d(R^{-1}p)}{dR} = (R^Tp)^\wedge
+    \]
+    
+    \[
+        \rm \therefore
+        \frac{d(R^{-1}p)}{dR} = 
+        \lim_{\varphi \rightarrow 0}
+        \frac{exp(-\phi^ \wedge)\varphi^ \wedge p}{\varphi}    
+        = \lim_{\varphi \rightarrow 0}
+        \frac{-exp(-\phi^ \wedge)p^ \wedge \varphi}{\varphi}    
+    \]
+    \[
+        \rm \therefore
+        \frac{d(R^{-1}p)}{dR} = -Rp^ \wedge
+    \]
+
+    <h3>3.2.</h3>
+
+    \[
+        \rm \frac{dln(R_1 R_2^{-1})}{dR_2} = 
+        \lim_{\varphi \rightarrow 0}
+        \frac{ln(R_1 [R_2 exp(\varphi ^ \wedge)]^T)^ \vee}{\varphi}
+    \]
+
+    \[
+        \rm =
+        \lim_{\varphi \rightarrow 0}
+        \frac{ln(R_1 exp(-\varphi ^ \wedge)]R_2^T)^ \vee - ln(R_1 R_2^T)^ \vee}{\varphi}
+    \]
+
+    \[
+        \rm =
+        \lim_{\varphi \rightarrow 0}
+        \frac{ln(R_1 R_2^T R_2 exp(-\varphi ^ \wedge)R_2^T)^ \vee - ln(R_1 R_2^T)^ \vee}{\varphi}
+    \]
+
+    \[
+        \rm =
+        \lim_{\varphi \rightarrow 0}
+        \frac{ln(R_1 R_2^T  exp((-R_2\varphi) ^ \wedge))^ \vee - ln(R_1 R_2^T)^ \vee}{\varphi} \tag{3.2.1}
+    \]
+
+    \[
+        \rm \because \varphi \rightarrow 0 \ \therefore (-R_2\varphi) \rightarrow 0
+    \]
+
+    \[
+        \rm \therefore 
+        \frac{dln(R_1 R_2^{-1})}{dR_2} = 
+        \lim_{\varphi \rightarrow 0}
+        \frac{ln(R_1 R_2^T)^ \vee - J_r^{-1}(-R_2\varphi)  - ln(R_1 R_2^T)^ \vee}{\varphi}
+    \]
+    \[
+        \rm = 
+        -J_r^{-1}(ln(R_1 R_2^T)^ \vee)R_2
+    \]
+    
+
+
+</body>
