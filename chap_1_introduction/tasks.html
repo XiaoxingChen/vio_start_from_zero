@@ -18,57 +18,90 @@
     </style>
 </head>
 <body>
-    <h2>1. </h2> 
-    <h2>2. </h2>
-    <h3>Code</h3>
+    <h1 align="center">第一章 课程作业</h1>
+    <h2>1. VIO 文献阅读</h2> 
+    <h3>视觉与IMU进行融合之后有哪些优势？</h3>
+    <p>
+            IMU适合计算短时间，快速的运动，但时间越长，误差就越大。视觉适合长时间，慢速的运动，但距离越长，误差就越大。视觉和IMU是基于截然不同的测量系统，相互之间不存在依赖性，两种系统固有的优势结合在一起可以相互弥补劣势。
+            这意味着就算摄像头被遮挡或只能看到光学特征极为有限的场景（例如白色墙壁），惯性系统依然可以在少数几帧的范围内继续测量。或者设备可能处于静止状态，此时视觉系统可以提供比惯性系统更稳定的姿态检测。
+            视觉和IMU结合之后可以适合长时间，长距离，慢速和快速的场景。
+    </p>
+    <h3>有哪些常见的视觉+IMU融合方案？有没有工业界应用的例子？</h3>
+    <p>
+        视觉与IMU融合之后，研究方向分为松耦合和紧耦合，松耦合分别单独计算出IMU测量得到的状态和视觉里程计得到的状态然后融合，紧耦合则将IMU测量和视觉约束信息放在一个非线性优化函数中去优化．紧耦合的框架使得IMU数据可以对视觉里程计进行矫正，同时视觉里程计信息也可以矫正IMU的零偏。
+    </p>
+    <p>
+        视觉和IMU融合目前主要基于三类方法：
+    </p>
+    <ul>
+        <li>滤波： 状态向量只包含当前状态．由于线性化误差和计算能力的限制，通常只能构建很少的landmark/map_point．或者创建structureless的状态向量（将landmark/map_point边缘化），典型代表为MSCKF.</li>
+        <li>滑动窗口优化：状态向量包含随时间滑动的窗口内多个状态．但是也需要将旧状态边缘化到高斯先验中，典型代表为VINS-Mono</li>
+        <li>全局优化： 状态向量包含所有相机位姿和strcuture信息，做大规模的非线性优化。最新的研究采用因子图，增量式地根据测量更新部分状态，典型代表为iSAM</li>
+    </ul>
+    <p>工业界例子：</p>
+    <ul>
+        <li>AR/VR领域: ARkit 和 ARcore</li>
+        <li>无人车: google的Waymo, Uber, Baidu等</li>
+        <li>无人机: 大疆、亿航</li>
+        <li>室内机器人： 扫地机器人</li>
+    </ul>
+
+
+    <h3>在学术界，VIO研究有哪些新进展？有没有将学习方法用到VIO中的例子？</h3>
+    <p>
+        最近学术界将深度学习技术应用SLAM研究中，例如深度学习与标定的结合，深度学习与匹配的结合，深度学习与跟踪的结合，深度学习与回环检测的结合，都取得了比较好的效果。CNN-SLAM将LSD-SLAM里的深度估计和图像匹配都替换成基于CNN的方法，取得了更为robust的结果。VINet利用CNN和RNN构建了一个VIO，即输入image和IMU信息，直接输出估计的pose。
+    </p>
+    <h2>2. 四元数和李代数更新</h2>
+    <h3>源码</h3>
     <pre class="prettyprint lang-cpp linenums">
-            #include &lt;iostream>
-            #include &lt;Eigen/Dense>
-            
-            int main()
+        #include &lt;iostream>
+        #include &lt;Eigen/Dense>
+        #include "sophus/so3.h"
+        
+        int main()
+        {
+            Eigen::Matrix3d orientation_in_mat(Eigen::Matrix3d::Identity());
+            Eigen::Quaterniond orientation_in_quat(Eigen::Quaterniond::Identity());
+        
+            Eigen::Vector3d update_in_so3(0.01, 0.02, 0.03);
+            Eigen::Quaterniond update_in_quat(1, 0.01/2, 0.02/2, 0.03/2);
+            update_in_quat.normalize();
+        
+            int it_num = 20;
+            for(int i = 0; i < it_num; i++)
             {
-                Eigen::Matrix3d orientation_in_mat(Eigen::Matrix3d::Identity());
-                Eigen::Quaterniond orientation_in_quat(Eigen::Quaterniond::Identity());
-            
-                Eigen::Vector3d update;
-                update << 0.01, 0.02, 0.03;
-                Eigen::Matrix3d update_in_mat = Eigen::AngleAxisd(update.norm(), update).toRotationMatrix();
-                Eigen::Quaterniond update_in_quat(Eigen::AngleAxisd(update.norm(), update));
-            
-                int it_num = 20;
-                for(int i = 0; i < it_num; i++)
-                {
-                    orientation_in_mat = update_in_mat * orientation_in_mat;
-                    orientation_in_quat = update_in_quat * orientation_in_quat;
-                    std::cout << "ori in quat: " << orientation_in_quat.coeffs().transpose() << "\t\t";
-                    std::cout << "ori in mat: " << Eigen::Quaterniond(orientation_in_mat).coeffs().transpose();
-                    std::cout << std::endl;  
-                }
-                return 0;
+                orientation_in_mat = Sophus::SO3::exp(update_in_so3).matrix() * orientation_in_mat;
+                orientation_in_quat = update_in_quat * orientation_in_quat;
+                std::cout << "step" << i << ": ";
+                std::cout << "quat: " << orientation_in_quat.coeffs().transpose() << "\t\t";
+                std::cout << "mat: " << Eigen::Quaterniond(orientation_in_mat).coeffs().transpose();
+                std::cout << std::endl;  
             }
+            return 0;
+        }
     </pre>
-    <h3>Output</h3>
+    <h3>输出对比</h3>
     <pre class="prettyprint linenums">
-    step0: quat: 0.000187072 0.000374144 0.000561216    0.999825      mat: 0.000187088 0.000374177 0.000561265 0.999738
-    step1: quat: 0.000374078 0.000748157  0.00112224     0.99965      mat: 0.000374013 0.000748026 0.00112204  0.999475
-    step2: quat: 0.000561019  0.00112204  0.00168306    0.999474      mat: 0.000560774  0.00112155 0.00168232  0.999212
-    step3: quat: 0.000747895  0.00149579  0.00224368    0.999297      mat: 0.000747372  0.00149474 0.00224211  0.998948
-    step4: quat: 0.000934704  0.00186941  0.00280411     0.99912      mat: 0.000933806  0.00186761 0.00280142  0.998684
-    step5: quat: 0.00112145  0.0022429 0.00336434   0.998943          mat: 0.00112008 0.00224015 0.00336023    0.99842
-    step6: quat: 0.00130813 0.00261625 0.00392438   0.998765          mat: 0.00130618 0.00261236 0.00391855   0.998155
-    step7: quat: 0.00149474 0.00298948 0.00448421   0.998587          mat: 0.00149213 0.00298425 0.00447638    0.99789
-    step8: quat: 0.00168128 0.00336257 0.00504385   0.998409          mat:  0.0016779 0.00335581 0.00503371   0.997625
-    step9: quat: 0.00186776 0.00373553 0.00560329   0.998229          mat: 0.00186352 0.00372704 0.00559056   0.997359
-    step10: quat: 0.00205418 0.00410836 0.00616253    0.99805         mat: 0.00204897 0.00409794 0.00614692   0.997093
-    step11: quat: 0.00224053 0.00448105 0.00672158    0.99787         mat: 0.00223426 0.00446852 0.00670278   0.996827
-    step12: quat: 0.00242681 0.00485361 0.00728042   0.997689         mat: 0.00241938 0.00483877 0.00725815    0.99656
-    step13: quat: 0.00261302 0.00522604 0.00783907   0.997508         mat: 0.00260435 0.00520869 0.00781304   0.996293
-    step14: quat: 0.00279917 0.00559834 0.00839751   0.997327         mat: 0.00278914 0.00557829 0.00836743   0.996025
-    step15: quat: 0.00298525 0.00597051 0.00895576   0.997145         mat: 0.00297378 0.00594755 0.00892133   0.995757
-    step16: quat: 0.00317127 0.00634254 0.00951381   0.996963         mat: 0.00315825 0.00631649 0.00947474   0.995489
-    step17: quat: 0.00335722 0.00671443 0.0100717    0.99678          mat: 0.00334255  0.0066851  0.0100277    0.99522
-    step18: quat: 0.0035431  0.0070862  0.0106293   0.996597          mat: 0.00352669 0.00705339  0.0105801   0.994951
-    step19: quat: 0.00372891 0.00745783 0.0111867   0.996413          mat: 0.00371067 0.00742134   0.011132   0.994682
+        step0: quat: 0.00499913 0.00999825  0.0149974   0.999825        mat: 0.00499971 0.00999942  0.0149991   0.999825
+        step1: quat: 0.0099965  0.019993 0.0299895    0.9993            mat: 0.00999767  0.0199953   0.029993     0.9993
+        step2: quat: 0.0149904 0.0299808 0.0449711  0.998426            mat: 0.0149921 0.0299843 0.0449764  0.998425
+        step3: quat: 0.019979 0.039958 0.059937 0.997202                mat: 0.0199813 0.0399627  0.059944  0.997201
+        step4: quat: 0.0249607 0.0499213  0.074882  0.995629            mat: 0.0249636 0.0499271 0.0748907  0.995628
+        step5: quat: 0.0299336 0.0598671 0.0898007  0.993708            mat:  0.029937 0.0598741 0.0898111  0.993707
+        step6: quat: 0.034896 0.069792 0.104688 0.991439                mat:    0.0349 0.0698001    0.1047  0.991437
+        step7: quat: 0.0398462 0.0796924  0.119539  0.988823            mat: 0.0398508 0.0797017  0.119553  0.988821
+        step8: quat: 0.0447825  0.089565  0.134348  0.985862            mat: 0.0447877 0.0895754  0.134363  0.985858
+        step9: quat: 0.0497031 0.0994062  0.149109  0.982555            mat: 0.0497088 0.0994177  0.149127  0.982551
+        step10: quat: 0.0546063  0.109213  0.163819  0.978905           mat: 0.0546126  0.109225  0.163838    0.9789
+        step11: quat: 0.0594904  0.118981  0.178471  0.974911           mat: 0.0594973  0.118995  0.178492  0.974906
+        step12: quat: 0.0643537  0.128707  0.193061  0.970577           mat: 0.0643611  0.128722  0.193083   0.97057
+        step13: quat: 0.0691945  0.138389  0.207584  0.965904           mat: 0.0692024  0.138405  0.207607  0.965896
+        step14: quat: 0.0740111  0.148022  0.222033  0.960892           mat: 0.0740195  0.148039  0.222058  0.960883
+        step15: quat: 0.0788018  0.157604  0.236405  0.955544           mat: 0.0788107  0.157621  0.236432  0.955534
+        step16: quat: 0.0835649   0.16713  0.250695  0.949861           mat: 0.0835743  0.167149  0.250723   0.94985
+        step17: quat: 0.0882987  0.176597  0.264896  0.943847           mat: 0.0883086  0.176617  0.264926  0.943834
+        step18: quat: 0.0930017  0.186003  0.279005  0.937502           mat: 0.0930121  0.186024  0.279036  0.937487
+        step19: quat: 0.0976721  0.195344  0.293016  0.930829           mat: 0.0976829  0.195366  0.293049  0.930813
     </pre>
     <h2>3. 其他导数</h2>
     <p>使用右乘\(\mathfrak{so}(3)\)，推导以下导数：</p>
@@ -122,19 +155,6 @@
     \[
         \rm \therefore
         \frac{d(R^{-1}p)}{dR} = (R^Tp)^\wedge
-    \]
-    
-    \[
-        \rm \therefore
-        \frac{d(R^{-1}p)}{dR} = 
-        \lim_{\varphi \rightarrow 0}
-        \frac{exp(-\phi^ \wedge)\varphi^ \wedge p}{\varphi}    
-        = \lim_{\varphi \rightarrow 0}
-        \frac{-exp(-\phi^ \wedge)p^ \wedge \varphi}{\varphi}    
-    \]
-    \[
-        \rm \therefore
-        \frac{d(R^{-1}p)}{dR} = -Rp^ \wedge
     \]
 
     <h3>3.2.</h3>
