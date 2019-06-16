@@ -1,0 +1,96 @@
+<head>
+    <script type="text/javascript" async 
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+    </script>
+    <!-- <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script> -->
+    <script src="../run_prettify.js"></script>
+    <style>
+        li.L0,
+        li.L1,
+        li.L2,
+        li.L3,
+        li.L5,
+        li.L6,
+        li.L7,
+        li.L8 {
+            list-style-type: decimal !important;
+        }
+    </style>
+</head>
+
+<body>
+    <p>Derivative</p>
+    \[
+        \dot R = R \omega^ \wedge   \tag{1-1}
+    \]
+    <p>Second Order Derivation</p>
+    \[
+        \ddot R = \dot R \omega^ \wedge + R \dot \omega^ \wedge
+    \]
+    \[
+        \ddot R = (R \omega)^ \wedge (R \omega)^ \wedge R + (R \dot \omega)^ \wedge R
+    \]
+    <p>chain principle</p>
+    \[
+        \dot r_I  = R_{IB} \dot r_B + \dot R_{IB} r_B
+    \]
+    \[
+        = R_{IB} v_B + \dot R_{IB} r_B
+    \]
+
+    \[
+        = R_{IB} v_B + R_{IB} \omega_B^\wedge r_B
+    \]
+
+    <p>acceleration</p>
+    \[
+        \ddot r_I  = 
+        \frac{d(R_{IB} v_B)}{dt}  + 
+        \frac{d(\dot R_{IB} r_B)}{dt}
+    \]
+    \[
+        = 
+        \left[  
+            \dot{R_{IB}} v_B + 
+            R_{IB} \dot v_B
+        \right]
+        + 
+        \left[
+            \ddot{R_{IB}} r_B + 
+            \dot R_{IB} \dot r_B
+        \right]
+
+    \]
+
+    \[
+        = 
+        \left[  
+            R_{IB}\omega_B ^ \wedge v_B + R_{IB} a_B
+        \right]
+        + 
+        \left[
+            (R_{IB} \omega_B)^ \wedge (R_{IB} \omega_B)^ \wedge r_B + 
+            (R_{IB} \dot \omega_B)^ \wedge R_{IB} r_B + 
+            (R_{IB} \omega_B)^\wedge R_{IB} v_B
+        \right]
+    \]
+
+    \[
+        = 
+            (R_{IB}\omega_B) ^ \wedge R_{IB} v_B + 
+            R_{IB} a_B + 
+            (R_{IB} \omega_B)^ \wedge (R_{IB} \omega_B)^ \wedge R_{IB} r_B + 
+            (R_{IB} \dot \omega_B)^ \wedge R_{IB} r_B + 
+            (R_{IB} \omega_B)^\wedge R_{IB} v_B
+    \]
+
+    \[
+        \therefore
+        \ddot r_I = R_{IB} a_B + 
+            2 (R_{IB}\omega_B) ^ \wedge R_{IB} v_B + 
+            (R_{IB} \omega_B)^ \wedge (R_{IB} \omega_B)^ \wedge R_{IB} r_B + 
+            (R_{IB} \dot \omega_B)^ \wedge R_{IB} r_B
+
+    \]
+
+</body>
