@@ -93,4 +93,34 @@
 
     \]
 
+    <h3>Derivative of Quaternion</h3>
+    <a href="http://web.cs.iastate.edu/~cs577/handouts/quaternion.pdf">good introduction to quaternion</a>
+    <h3>Intuition 1.</h3>
+    \[
+        cos\varphi + \boldsymbol{i} sin\varphi = e^{i\varphi}
+    \]
+
+    \[
+        q = cos(\frac{\varphi}{2}) + {\boldsymbol{u}} sin(\frac{\varphi}{2}) = e^{\boldsymbol{u}\frac{\varphi}{2}}
+    \]
+
+    \[
+        \frac{dq}{dt} = \frac{dq}{d\varphi} \frac{d\varphi}{dt}
+    \]
+
+    \[
+         = \frac{d\left(e^{\boldsymbol{u}(\frac{\varphi}{2})}\right)}{d\varphi} \frac{d\varphi}{dt}
+    \]
+
+    \[
+        = \frac{1}{2}\boldsymbol{u}e^{\boldsymbol{u}(\frac{\varphi}{2})}\frac{d\varphi}{dt} 
+    \]
+
+    \[
+        = \frac{1}{2}\left(\boldsymbol{u}\frac{d\varphi}{dt}\right)q
+    \]
+    \[
+        = \frac{1}{2}\boldsymbol{\omega}q
+    \]
+
 </body>
