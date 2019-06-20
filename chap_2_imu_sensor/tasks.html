@@ -2,7 +2,6 @@
     <script type="text/javascript" async 
     src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
     </script>
-    <!-- <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script> -->
     <script src="../run_prettify.js"></script>
     <style>
         li.L0,
@@ -21,6 +20,72 @@
     <h1 align="center">第二章 课程作业</h1>
     <h2>1. 生成Allen方差标定曲线</h2>
     <h2>2. IMU仿真代码中的欧拉积分替换为中值积分</h2>
+    <pre class="prettyprint lang-cpp linenums">
+    void IMU::testImuMidIntegral(std::string src, std::string dist)
+    {
+        std::vector&lt;MotionData>imudata;
+        LoadPose(src,imudata);
+
+        std::ofstream save_points;
+        save_points.open(dist);
+
+        double dt = param_.imu_timestep;
+        Eigen::Vector3d Pwb = init_twb_;              // position :    from  imu measurements
+        Eigen::Quaterniond Qwb(init_Rwb_);            // quaterniond:  from imu measurements
+        Eigen::Vector3d Vw = init_velocity_;          // velocity  :   from imu measurements
+        Eigen::Vector3d gw(0,0,-9.81);                // ENU frame
+        Eigen::Vector3d temp_a;
+        Eigen::Vector3d theta;
+        for (int i = 1; i < imudata.size() - 1; ++i) {
+
+            MotionData imupose = imudata[i];
+            MotionData imupose_1 = imudata[i+1];
+
+            Eigen::Quaterniond dq;
+            Eigen::Vector3d dtheta_0 =  imupose.imu_gyro * dt;
+            Eigen::Vector3d dtheta_1 =  imupose_1.imu_gyro * dt;
+            
+            dq.w() = 1;
+            dq.x() = 0.25 * (dtheta_0.x() + dtheta_1.x());
+            dq.y() = 0.25 * (dtheta_0.y() + dtheta_1.y());
+            dq.z() = 0.25 * (dtheta_0.z() + dtheta_1.z());
+
+            /// imu dynamimc model, mid-point integration
+            Eigen::Quaterniond Qwb_result = Qwb * dq;
+            Eigen::Vector3d acc_w = 0.5 * (Qwb * (imupose.imu_acc) + Qwb_result * (imupose_1.imu_acc)) + gw;
+
+            Qwb = Qwb_result;
+            Vw = Vw + acc_w * dt;
+            Pwb = Pwb + Vw * dt + 0.5 * dt * dt * acc_w;
+
+            save_points << imupose.timestamp << " "
+                    << Qwb.w() << " "
+                    << Qwb.x() << " "
+                    << Qwb.y() << " "
+                    << Qwb.z() << " "
+                    << Pwb(0)  << " "
+                    << Pwb(1)  << " "
+                    << Pwb(2)  << " "
+                    << Qwb.w() << " "
+                    << Qwb.x() << " "
+                    << Qwb.y() << " "
+                    << Qwb.z() << " "
+                    << Pwb(0)  << " "
+                    << Pwb(1)  << " "
+                    << Pwb(2)  << " "
+                    << std::endl;
+
+        }
+
+        std::cout << "test　end" << std::endl;
+
+    }
+    </pre>
+    <h3>Result</h3>
+    <img src="./task1/panoramic.png" alt="panoramic" align="center">    
+    <img src="./task1/non_noise_closure.png" alt="closure" align="center">    
+    <img src="./task1/non_noise_birdview.png" alt="birdview" align="center">    
+    <img src="./task1/noise.png" alt="noise" align="center">    
     <h2>3. 从轨迹生成IMU数据</h2>
     
 </body>
