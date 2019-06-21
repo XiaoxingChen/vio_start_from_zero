@@ -17,7 +17,7 @@
     </style>
 </head>
 <body>
-    <h1>IMU from Iround Truth</h1>
+    <h1>IMU from Ground Truth</h1>
     <h2>Notation</h2>
     <p>Frame:  </p>
     <ul>
@@ -87,13 +87,34 @@
     \]
     <h3>Derivative of trajectory orientation</h3>
     \[
-        ln(R_{IB,k}^T R_{IB,k+1})^\vee = \Delta \boldsymbol{\varphi}_{IB}^B
+        ln(R_{IB,k}^T R_{IB,k+1})^\vee = \Delta \boldsymbol{\varphi}_{IB}^I
     \]
     \[
-        \frac{ln(R_k^T R_{k+1})^\vee}{\Delta t} = \omega_{IB}^B
+        \frac{ln(R_k^T R_{k+1})^\vee}{\Delta t} = \omega_{IB}^I
     \]
     <p>Then we get <b>out1</b>:</p>
     \[
-        \omega_{IM}^{M} = \omega_{IB}^{M} = R_{MB} \omega_{IB}^{B}
+        \omega_{IM}^{M} = \omega_{IB}^{M} = R_{MB} R_{BI} \omega_{IB}^{I}
+    \]
+
+    <h3>Acceleration</h3>
+    \[
+        T_{IM}^I = R_{IB} T_{BM} + T_{IB}
+    \]
+    <p>Time derivative:</p>
+    \[
+        \dot T_{IM}^I = \dot R_{IB} T_{BM} + \dot T_{IB}
+    \]
+
+    \[
+        \ddot T_{IM}^I = \ddot R_{IB} T_{BM} + \ddot T_{IB}
+    \]
+
+    \[
+        \ddot T_{IM}^I = (R_{IB}\omega_{IB}^{I\wedge} \omega_{IB}^{I\wedge} + R_{IB}\dot\omega_{IB}^{I\wedge}) T_{BM} + \ddot T_{IB}
+    \]
+
+    \[
+        \ddot T_{IM}^M = R_{MB} R_{BI} \ddot T_{IM}^I
     \]
 </body>
