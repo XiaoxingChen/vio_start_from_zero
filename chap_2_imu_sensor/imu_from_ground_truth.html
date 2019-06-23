@@ -18,6 +18,8 @@
 </head>
 <body>
     <h1>IMU from Ground Truth</h1>
+    <h2>References</h2>
+    <a href="https://stackoverflow.com/questions/45179024/scipy-bspline-fitting-in-python">bspline interpolation python</a>
     <h2>Notation</h2>
     <p>Frame:  </p>
     <ul>
@@ -87,10 +89,10 @@
     \]
     <h3>Derivative of trajectory orientation</h3>
     \[
-        ln(R_{IB,k}^T R_{IB,k+1})^\vee = \Delta \boldsymbol{\varphi}_{IB}^I
+        ln(R_{IB,k+1}R_{IB,k}^T )^\vee = \Delta \boldsymbol{\varphi}_{IB}^I
     \]
     \[
-        \frac{ln(R_k^T R_{k+1})^\vee}{\Delta t} = \omega_{IB}^I
+        \frac{ln(R_{k+1}R_k^T )^\vee}{\Delta t} = \omega_{IB}^I
     \]
     <p>Then we get <b>out1</b>:</p>
     \[
@@ -115,10 +117,7 @@
     \]
 
     \[
-        \ddot T_{IM}^M = R_{MB} R_{BI} \ddot T_{IM}^I
+        \ddot T_{IM}^M = R_{MB} R_{BI} \ddot T_{IM}^I + R_{MB} R_{BI}\boldsymbol{g}
     \]
 
-    \[
-        \ddot T_{IM}^M = R_{MB} R_{BI} 
-    \]
 </body>

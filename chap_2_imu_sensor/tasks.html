@@ -19,6 +19,26 @@
 <body>
     <h1 align="center">第二章 课程作业</h1>
     <h2>1. 生成Allen方差标定曲线</h2>
+    <p>
+        仿真IMU数据集，自己设定的加速度的高斯白噪声为0.029，陀螺仪的高斯白噪声为0.035，加速度bias的随机游走噪声为0.0008，陀螺仪bias的随机游走噪声为0.00016。
+        通过使用imu_utils开源工具，我们可以得到imu_acc, imu_gyro相应数据，由于绘制Allan_variance用的是matlab编写的文件，因为版权问题，自己动手写了一个绘制曲线的python脚本。
+        需要注意一点的是imu_utils得到的imu_gyro 数据单位是用deg/h表示，需要自己动手转化为rad/s才能直接从Allan_variance上直接读出相应标定数据
+    </p>
+    <p style="float: left; font-size: 9pt; text-align: center; width: 45%; margin-right: 1%; margin-bottom: 0.5em;">
+            <img src="./task1/allen_acc.png" style="width: 100%">图1-1: 加速度计艾伦方差曲线</p>
+        <p style="float: left; font-size: 9pt; text-align: center; width: 45%; margin-right: 1%; margin-bottom: 0.5em;">
+            <img src="./task1/allen_gyro.png" style="width: 100%">图1-2: 陀螺仪艾伦方差曲线</p>
+        <p style="clear: both;">
+    <p>
+        从上图中得到:
+        用imu_utils工具进行标定，加速度和陀螺仪的高斯白噪声与理论值比较接近，数据在一个数量级上，但加速度和陀螺仪bias的随机游走噪声误差较大，数据相差一个数量级，需要自己进行缩放调整。
+    </p>
+    <ul>
+        <li>加速度的高斯白噪声为0.0369，设定值为0.0029</li>
+        <li>陀螺仪的高斯白噪声为0.0447，设定值为0.0035</li>
+        <li>加速度bias的随机游走噪声为0.00578， 设定值为0.0008</li>
+        <li>陀螺仪bias的随机游走噪声为0.00257，设定值为0.00016</li>
+    </ul>
     <h2>2. IMU仿真代码中的欧拉积分替换为中值积分</h2>
     <pre class="prettyprint lang-cpp linenums">
     void IMU::testImuMidIntegral(std::string src, std::string dist)
@@ -81,11 +101,111 @@
 
     }
     </pre>
-    <h3>Result</h3>
-    <img src="./task1/panoramic.png" alt="panoramic" align="center">    
-    <img src="./task1/non_noise_closure.png" alt="closure" align="center">    
-    <img src="./task1/non_noise_birdview.png" alt="birdview" align="center">    
-    <img src="./task1/noise.png" alt="noise" align="center">    
-    <h2>3. 从轨迹生成IMU数据</h2>
+    <h3>结果</h3>
+
+    <p style="float: left; font-size: 9pt; text-align: center; width: 45%; margin-right: 1%; margin-bottom: 0.5em;">
+        <img src="./task1/panoramic.png" style="width: 100%">图2-1: 全部曲线</p>
+    <p style="float: left; font-size: 9pt; text-align: center; width: 45%; margin-right: 1%; margin-bottom: 0.5em;">
+        <img src="./task1/non_noise_closure.png" style="width: 100%">图2-2: 真实基准、欧拉积分与中值积分的初末位置</p>
+    <p style="clear: both;">
+    <p style="float: left; font-size: 9pt; text-align: center; width: 45%; margin-right: 1%; margin-bottom: 0.5em;">
+        <img src="./task1/non_noise_birdview.png" style="width: 100%">图2-3: 欧拉积分与中值积分曲线俯视图</p>
+    <p style="float: left; font-size: 9pt; text-align: center; width: 45%; margin-right: 1%; margin-bottom: 0.5em;">
+        <img src="./task1/noise.png" style="width: 100%">图2-4: 带噪声的欧拉积分与中值积分曲线</p>
+    <p style="clear: both;">
+
+    <h3>分析</h3>
+    <ul>
+        <li>由图2-1可见，采用欧拉积分和中值积分输出的曲线较为接近。</li>
+        <li>图2-2放大了不带噪声的IMU积分曲线的起始点。由于真实轨迹为闭合曲线，因此可以通过积分曲线的初末位置差，即曲线闭合程度来衡量积分结果的准确度。
+            可以看到红色的中值积分曲线底部覆盖着橙色的真实轨迹，仅有一处红色的中值积分曲线断开，说明两者重合度较高。而绿色的欧拉积分曲线在经过较长一段时间积分后，最终的末位置
+            距离橙色真实轨迹偏差较大。证明了中值积分的精确度高于欧拉积分。
+        </li>
+        <li>
+            图2-3显示了俯视的轨迹。可以看到绿色欧拉积分的曲线逐渐圆心，而红色中值积分曲线没有明显误差。该现象可以理解为，欧拉积分按圆的切线做积分，会有“离心”的现象。
+            而中值积分按“割线”做积分，误差较小。
+        </li>
+    </ul>
+    
+    <h2>3. 从离散轨迹生成IMU数据</h2>
+    <h3>公式推导</h3>
+    <p>坐标系：</p>
+    <p>通过Euroc数据集实现离散轨迹生成IMU数据涉及3个坐标系，它们分别是：</p>
+    <ul>
+        <li>坐标系 I: 系统的全局坐标系，亦即惯性坐标系</li>
+        <li>坐标系 B: VIO系统机体坐标系</li>
+        <li>坐标系 M: VIO系统上IMU所在的坐标系</li>
+    </ul>
+    <p>已知量：</p>
+    <ul>
+        <li>\(R_{IB}(t)\): 机体坐标系方位角</li>
+        <li>\(T_{IB}(t)\): 机体坐标系位置</li>
+        <li>\(R_{BM}\): IMU在机体坐标系下的方位角，常量</li>
+        <li>\(T_{BM}\): IMU在机体坐标系下的位置，常量</li>
+    </ul>
+    <p>待求变量：</p>
+    <ul>
+        <li>\(\omega_{IM}^{M}\): IMU坐标系相对惯性坐标系的角速度在IMU坐标系下的表示。即陀螺仪测得的角速度。</li>
+        <li>\(\ddot{T}_{IM}^{M}\): IMU坐标系相对惯性坐标系的加速度在IMU坐标系下的表示。即加速度计测得的加速度。</li>
+    </ul>
+
+    <h4>角速度的推导</h4>
+    <p>直接对轨迹的方位角求导可以得到角速度在惯性坐标系下的表示：</p>
+    \[
+        ln(R_{IB,k+1}R_{IB,k}^T )^\vee = \Delta \boldsymbol{\varphi}_{IB}^I
+    \]
+    \[
+        \frac{ln(R_{k+1}R_k^T )^\vee}{\Delta t} = \omega_{IB}^I
+    \]
+    <p>坐标变换后可得IMU坐标系下的角速度：</p>
+    \[
+        \omega_{IM}^{M} = \omega_{IB}^{M} = R_{MB} R_{BI} \omega_{IB}^{I}
+    \]
+    <h4>加速度的推导</h4>
+    \[
+        \dot T_{IM}^I = \dot R_{IB} T_{BM} + \dot T_{IB}
+    \]
+
+    \[
+        \ddot T_{IM}^I = \ddot R_{IB} T_{BM} + \ddot T_{IB}
+    \]
+
+    \[
+        \ddot T_{IM}^I = (R_{IB}\omega_{IB}^{I\wedge} \omega_{IB}^{I\wedge} + R_{IB}\dot\omega_{IB}^{I\wedge}) T_{BM} + \ddot T_{IB}
+    \]
+
+    \[
+        \ddot T_{IM}^M = R_{MB} R_{BI} \ddot T_{IM}^I + R_{MB} R_{BI}\boldsymbol{g}
+    \]
+
+    <h3>推导结果验证方案</h3>
+    <p>
+        以Euroc数据集进行验证。Euroc数据集vicon room包含6自由度的ground truth和IMU原始数据。理论上通过对轨迹的积分和坐标变换可以获得IMU坐标系下的角速度和加速度。
+        而数据中已经包含IMU的原始数据。从ground truth获得的传感器数据与IMU数据之间的差，理论上就是IMU传感器各轴的零偏。
+    </p>
+    <p>
+        论文中采用四次B样条表示法来描述离散点构成的曲线，四次B样条满足二阶导数连续性，因此其结果更加平滑。
+        由于李代数下的B样条代码实现较为复杂，而本次作业时间有限，因此使用差分求导并滤波的方式替代B样条上求导解析式，验证推导的正确性。
+        图3-1与3-2显示了两种不同求导方式的差异。四次B样条求导后的平滑度远高于差分求导，但是后者趋势正确，经滤波后能够用于验证上文公式。
+    </p>
+    <p style="float: left; font-size: 9pt; text-align: center; width: 100%; margin-right: 1%; margin-bottom: 0.5em;">
+            <img src="./task2/spl_vel.png" style="width: 100%">图3-1: 差分求导与四次B样条求导得到的速度曲线对比</p>
+    <p style="float: left; font-size: 9pt; text-align: center; width: 100%; margin-right: 1%; margin-bottom: 0.5em;">
+            <img src="./task2/spl_acc.png" style="width: 100%">图3-2: 差分求导与四次B样条求导得到的加速度曲线对比</p>
+    <h3>结果对比</h3>
+    <p style="float: left; font-size: 9pt; text-align: center; width: 100%; margin-right: 1%; margin-bottom: 0.5em;">
+        <img src="./task2/angle_rate_filt.png" style="width: 100%">图3-3: 由轨迹求解出的IMU坐标系下的角速度(滤波后)</p>
+    <p style="clear: both;">
+    <p style="float: left; font-size: 9pt; text-align: center; width: 100%; margin-right: 1%; margin-bottom: 0.5em;">
+        <img src="./task2/acc_filt.png" style="width: 100%">图3-4: 由轨迹求解出的IMU坐标系下的加速度(滤波后)</p>
+    <p style="clear: both;">
+    <h4>结论</h4>
+    <p>
+        通过轨迹求出的IMU数据和传感器真实数据走势非常接近。但是由于IMU的噪声和ground truth不是理想的观测，因此仍存在各自的噪声。
+    </p>
+    <p>
+        对离散采样数据进行直接求导会引入大量噪声。难以直接对比通过ground truth和通过IMU获得数据。在对结果进行简单的滑动窗口滤波之后，
+        噪声降低，可以看出两种方式获得的数据的差值，为一个略有波动的恒定值，即该轴传感器数据的零偏。结果基本验证了上文公式推导的正确性。
+    </p>
     
 </body>
