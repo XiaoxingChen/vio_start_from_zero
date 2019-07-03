@@ -1,0 +1,105 @@
+<head>
+    <script type="text/javascript" async 
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+    </script>
+    <!-- <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script> -->
+    <script src="../run_prettify.js"></script>
+    <style>
+        li.L0,
+        li.L1,
+        li.L2,
+        li.L3,
+        li.L5,
+        li.L6,
+        li.L7,
+        li.L8 {
+            list-style-type: decimal !important;
+        }
+    </style>
+</head>
+<h1 align="center">第x章 课程作业</h1>
+<h2>3. </h2>
+
+\[
+    \left( \mathbf{J^\top}\mathbf{J} + \mu \mathbf{J} \right)\Delta x_{lm} = -\mathbf{J^\top} f
+\]
+
+\[
+    \because \mathbf{J^\top}\mathbf{J} = \mathbf{V\Lambda V ^\top}, \mathbf{V}^{-1} = \mathbf{V^\top}
+\]
+
+\[
+    \therefore \mathbf{J^\top}\mathbf{I} + \mu \mathbf{J} = 
+    \mathbf{V\Lambda V^\top} + \mathbf{V}\mu\mathbf{IV^\top}
+\]
+\[
+    = \mathbf{V}\left(  
+        \mathbf{\Lambda} + \mu\mathbf{I}
+        \right)\mathbf{V^\top}
+\]
+
+<p>denote:</p>
+\[
+    \mathbf A = \mathbf{\Lambda} + \mu\mathbf{I} = 
+    \left[
+    \begin{matrix}
+        \lambda_1+\mu & 0 & 0 \\
+        0 & \lambda_2+\mu & 0 \\
+        0 & 0 & \lambda_3+\mu
+    \end{matrix}
+    \right]  \ \ \tag{3-1}
+    
+\]
+
+\[
+    \because \mathbf V = \left[v_1\ v_2\ v_3\right],\ \mathbf{J^\top} f = \mathbf F'^\top
+\]
+
+\[
+    \therefore \Delta x_{lm} 
+    = - \left( \mathbf{J^\top}\mathbf{J} + \mu \mathbf{J} \right)^{-1} \mathbf F'^\top
+    = -\mathbf{VA^{-1}V^\top}\mathbf F'^\top
+\]
+\[
+    
+    = -\mathbf{VA^{-1}}
+    \left[
+    \begin{matrix}
+    v_1^\top \mathbf F'^\top \\
+    v_2^\top \mathbf F'^\top \\
+    v_3^\top \mathbf F'^\top 
+    \end{matrix}
+    \right]
+
+    = -\mathbf{V}
+    \left[
+    \begin{matrix}
+    \frac{v_1^\top \mathbf F'^\top}{\lambda_1+\mu} \\
+    \frac{v_2^\top \mathbf F'^\top}{\lambda_2+\mu} \\
+    \frac{v_3^\top \mathbf F'^\top}{\lambda_3+\mu} 
+    \end{matrix}
+    \right]
+
+     = -[v_1 \ v_2 \ v_3]
+    \left[
+    \begin{matrix}
+    \frac{v_1^\top \mathbf F'^\top}{\lambda_1+\mu} \\
+    \frac{v_2^\top \mathbf F'^\top}{\lambda_2+\mu} \\
+    \frac{v_3^\top \mathbf F'^\top}{\lambda_3+\mu} 
+    \end{matrix}
+    \right]
+\]
+\[
+    = - \sum_{j=i}^{n} v_j \frac{v_j^\top \mathbf F'^\top}{\lambda_j + \mu}
+\]
+
+\[
+    \because shape(v_j^\top \mathbf F'^\top) = 1 \times 1
+\]
+\[
+    \therefore v_j (v_j^\top \mathbf F'^\top) = (v_j^\top \mathbf F'^\top)v_j 
+\]
+\[
+    \therefore \Delta x_{lm} = 
+    - \sum_{j=i}^{n} \frac{v_j^\top \mathbf F'^\top}{\lambda_j + \mu} v_j
+\]
