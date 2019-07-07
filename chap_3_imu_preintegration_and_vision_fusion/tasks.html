@@ -158,19 +158,39 @@ shared_ptr<Vertex> EmulateObservation(int data_num, double w_sigma, Problem& pro
 表1-1: 曲线参数估计结果
 </p>
 <p>可以看到给定的噪声较小时，估计结果较为准确。当噪声方差达到1.0时，估计结果已经出现明显的偏差。</p>
-<h2>2</h2>
+<h2>2 公式推导</h2>
+<p>课程材料中已给出：</p>
+\[
+    \omega = \frac{1}{2}
+    \left(
+        (\omega^{b_k} + n_k^g - b_k^g) +
+        (\omega^{b_{k+1}} + n_{k+1}^g - b_k^g) 
+    \right)
+    \tag{2-1}
+\]
+\[
+    q_{b_i b_{k+1}} = 
+    q_{b_i b_k} \otimes 
+    \left[\begin{matrix}
+        1 \\ \frac{1}{2}\omega \delta t
+    \end{matrix}\right]
+    \tag{2-2} 
+\]
 \[
     \mathbf a = \frac{1}{2}
     \left(
         \underbrace{q_{b_i b_k}(a^{b_k} + n_k^a - b_k^a)}_{part\ 1} + 
         \underbrace {q_{b_i b_{k+1}}(a^{b_{k+1}} + n_{k+1}^a - b_k^a)}_{part\ 2}
-    \right)
+    \right) \tag{2-3}
 \]
 
 \[
     \alpha_{b_i b_{k+1}} = \alpha_{b_i b_k} + \beta_{b_i b_k} \delta t + \frac{1}{2} \mathbf a \delta t^2
+    \tag{2-4}
 \]
 <h3>2.1 \(f_{15}\)</h3>
+
+<p>\(f_{15}\)仅与(2-3)中part 2有关，因此直接对该部分求导：</p>
 
 \[
     f_{15} = \frac{\partial \alpha_{b_i b_{k+1}}}{\partial \delta b_k^g} = 
@@ -251,14 +271,68 @@ shared_ptr<Vertex> EmulateObservation(int data_num, double w_sigma, Problem& pro
 
 <h3>2.2 \(g_{12}\)</h3>
 \[
-    g_{12} = \frac{\partial \alpha_{b_i b_{k+1}}}{\partial n_k^g} = 
-    \frac{1}{4} \frac{\partial}{\partial \delta b_k^g} 
-    \left(
-        q_{b_i b_{k+1}}(a^{b_{k+1}} + n_{k+1}^a - b_k^a) \delta t^2
-    \right)
+    g_{12} = 
+    \frac{\partial \alpha_{b_i b_{k+1}}}{\partial n_k^g}
+\]
+<p>同样仅(2-3)中part 2与\(n_k^g\)有关，对该部分求导：</p>
+\[
+    \therefore g_{12} = 
+    \frac{1}{4}
+    \frac{\partial
+        q_{b_i b_k} \otimes 
+        \left[\begin{matrix}
+        1 \\ \frac{1}{2}\omega \delta t
+        \end{matrix}\right]
+        (\omega^{b_{k+1}} - b_k^g)\delta t^2
+    }{\partial n_k^g}
+    
 \]
 
-<h2>3. </h2>
+\[
+    = \frac{1}{4}
+    \frac{\partial
+        R_{b_i b_{k+1}}
+        exp\left(\left[
+            \frac{1}{2}\delta n_k^g \delta t
+        \right]_\times\right)
+        (\omega^{b_{k+1}} - b_k^g)\delta t^2
+    }{\partial n_k^g}
+\]
+
+\[
+    = \frac{1}{4}
+    \frac{
+        R_{b_i b_{k+1}}
+        \left[
+            \frac{1}{2}\delta n_k^g \delta t
+        \right]_\times
+        (\omega^{b_{k+1}} - b_k^g)\delta t^2
+    }{n_k^g}
+\]
+\[
+    = -\frac{1}{4}
+    \frac{
+        R_{b_i b_{k+1}}
+        \left[
+        (\omega^{b_{k+1}} - b_k^g)\delta t^2    
+        \right]_\times
+        
+        \left(\frac{1}{2}\delta n_k^g \delta t\right)
+    }{n_k^g}
+\]
+\[
+    = -\frac{1}{4}
+        \left(R_{b_i b_{k+1}}
+        \left[
+        (\omega^{b_{k+1}} - b_k^g)   
+        \right]_\times
+        \delta t^2
+        \right)
+        
+        \left(\frac{1}{2} \delta t\right)
+\]
+
+<h2>3. 证明</h2>
 
 \[
     \left( \mathbf{J^\top}\mathbf{J} + \mu \mathbf{J} \right)\Delta x_{lm} = -\mathbf{J^\top} f
@@ -278,7 +352,7 @@ shared_ptr<Vertex> EmulateObservation(int data_num, double w_sigma, Problem& pro
         \right)\mathbf{V^\top}
 \]
 
-<p>denote:</p>
+<p>记:</p>
 \[
     \mathbf A = \mathbf{\Lambda} + \mu\mathbf{I} = 
     \left[
