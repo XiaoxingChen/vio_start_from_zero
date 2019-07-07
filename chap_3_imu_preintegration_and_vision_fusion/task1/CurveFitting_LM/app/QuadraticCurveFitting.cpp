@@ -77,7 +77,7 @@ shared_ptr<Vertex> EmulateObservation(int data_num, double w_sigma, Problem& pro
 int main()
 {
     int N = 100;                          // 数据点
-    double w_sigma= 0.1;                 // 噪声Sigma值
+    double w_sigma= 1.;                 // 噪声Sigma值
 
     // std::default_random_engine generator;
     // std::normal_distribution<double> noise(0.,w_sigma);
