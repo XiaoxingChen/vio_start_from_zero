@@ -17,7 +17,107 @@
         }
     </style>
 </head>
-<h1 align="center">第x章 课程作业</h1>
+<h1 align="center">第3章 课程作业</h1>
+<h2>2</h2>
+\[
+    \mathbf a = \frac{1}{2}
+    \left(
+        \underbrace{q_{b_i b_k}(a^{b_k} + n_k^a - b_k^a)}_{part\ 1} + 
+        \underbrace {q_{b_i b_{k+1}}(a^{b_{k+1}} + n_{k+1}^a - b_k^a)}_{part\ 2}
+    \right)
+\]
+
+\[
+    \alpha_{b_i b_{k+1}} = \alpha_{b_i b_k} + \beta_{b_i b_k} \delta t + \frac{1}{2} \mathbf a \delta t^2
+\]
+<h3>2.1 \(f_{15}\)</h3>
+
+\[
+    f_{15} = \frac{\partial \alpha_{b_i b_{k+1}}}{\partial \delta b_k^g} = 
+    \frac{1}{4} \frac{\partial}{\partial \delta b_k^g} 
+    \left(
+        q_{b_i b_{k+1}}(a^{b_{k+1}} + n_{k+1}^a - b_k^a) \delta t^2
+    \right)
+\]
+\[
+    = 
+    \frac{1}{4}
+    \frac
+    {   
+        \partial
+        q_{b_i b_k} \otimes 
+        \left[\begin{matrix}
+            1 \\ \frac{1}{2}\omega \delta t
+        \end{matrix}\right] \otimes 
+        \left[\begin{matrix}
+            1 \\ -\frac{1}{2}\delta b_k^g \delta t
+        \end{matrix}\right]
+        (a_{b_{k+1}} - b_k^a)
+        \delta t^2
+    }
+    {\partial \delta b_k^g}
+\]
+
+\[
+    = 
+    \frac{1}{4}
+    \frac
+    {   
+        \partial
+        R_{b_i b_{k+1}} 
+        exp \left( \left[
+            -\delta b_k^g \delta t
+        \right]_\times\right)
+        (a_{b_{k+1}} - b_k^a)
+        \delta t^2
+    }
+    {\partial \delta b_k^g}
+\]
+
+\[
+    = 
+    \frac{1}{4}
+    \frac
+    {   
+        \partial
+        R_{b_i b_{k+1}} 
+        (\mathbf I + \left[ -\delta b_k^g \delta t \right]_\times)
+        (a_{b_{k+1}} - b_k^a)
+        \delta t^2
+    }
+    {\partial \delta b_k^g}
+\]
+
+\[
+    = 
+    -\frac{1}{4}
+    \frac
+    {   
+        \partial
+        R_{b_i b_{k+1}} 
+        (\left[ (a_{b_{k+1}} - b_k^a)\delta t^2 \right]_\times)
+        (-\delta b_k^g \delta t)
+    }
+    {\partial \delta b_k^g}
+\]
+\[
+    = 
+    -\frac{1}{4}
+    R_{b_i b_{k+1}} 
+    (\left[ (a_{b_{k+1}} - b_k^a)\delta t^2 \right]_\times)
+    (-\delta t) 
+\]
+
+
+<h3>2.2 \(g_{12}\)</h3>
+\[
+    g_{12} = \frac{\partial \alpha_{b_i b_{k+1}}}{\partial n_k^g} = 
+    \frac{1}{4} \frac{\partial}{\partial \delta b_k^g} 
+    \left(
+        q_{b_i b_{k+1}}(a^{b_{k+1}} + n_{k+1}^a - b_k^a) \delta t^2
+    \right)
+\]
+
 <h2>3. </h2>
 
 \[
@@ -43,16 +143,16 @@
     \mathbf A = \mathbf{\Lambda} + \mu\mathbf{I} = 
     \left[
     \begin{matrix}
-        \lambda_1+\mu & 0 & 0 \\
-        0 & \lambda_2+\mu & 0 \\
-        0 & 0 & \lambda_3+\mu
+        \lambda_1+\mu & \dots & 0 \\
+        \vdots & \ddots & \vdots \\
+        0 & \dots & \lambda_n+\mu
     \end{matrix}
     \right]  \ \ \tag{3-1}
     
 \]
 
 \[
-    \because \mathbf V = \left[v_1\ v_2\ v_3\right],\ \mathbf{J^\top} f = \mathbf F'^\top
+    \because \mathbf V = \left[v_1\ v_2\ \dots v_n\right],\ \mathbf{J^\top} f = \mathbf F'^\top
 \]
 
 \[
@@ -67,7 +167,8 @@
     \begin{matrix}
     v_1^\top \mathbf F'^\top \\
     v_2^\top \mathbf F'^\top \\
-    v_3^\top \mathbf F'^\top 
+    \vdots \\
+    v_n^\top \mathbf F'^\top 
     \end{matrix}
     \right]
 
@@ -76,16 +177,18 @@
     \begin{matrix}
     \frac{v_1^\top \mathbf F'^\top}{\lambda_1+\mu} \\
     \frac{v_2^\top \mathbf F'^\top}{\lambda_2+\mu} \\
-    \frac{v_3^\top \mathbf F'^\top}{\lambda_3+\mu} 
+    \vdots \\
+    \frac{v_n^\top \mathbf F'^\top}{\lambda_n+\mu} 
     \end{matrix}
     \right]
 
-     = -[v_1 \ v_2 \ v_3]
+     = -[v_1 \ v_2 \ \dots v_n]
     \left[
     \begin{matrix}
     \frac{v_1^\top \mathbf F'^\top}{\lambda_1+\mu} \\
     \frac{v_2^\top \mathbf F'^\top}{\lambda_2+\mu} \\
-    \frac{v_3^\top \mathbf F'^\top}{\lambda_3+\mu} 
+    \vdots \\
+    \frac{v_n^\top \mathbf F'^\top}{\lambda_n+\mu} 
     \end{matrix}
     \right]
 \]
