@@ -18,6 +18,68 @@
     </style>
 </head>
 <h1 align="center">第x章 课程作业</h1>
+<h3>2.2 \(g_{12}\)</h3>
+\[
+    g_{12} = 
+    \frac{\partial \alpha_{b_i b_{k+1}}}{\partial n_k^g}
+\]
+<p>其中仅part 2与\(n_k^g\)有关</p>
+\[
+    \therefore g_{12} = 
+    \frac{1}{4}
+    \frac{\partial
+        q_{b_i b_k} \otimes 
+        \left[\begin{matrix}
+        1 \\ \frac{1}{2}\omega \delta t
+        \end{matrix}\right]
+        (\omega^{b_{k+1}} - b_k^g)\delta t^2
+    }{\partial n_k^g}
+    
+\]
+
+\[
+    = \frac{1}{4}
+    \frac{\partial
+        R_{b_i b_{k+1}}
+        exp\left(\left[
+            \frac{1}{2}\delta n_k^g \delta t
+        \right]_\times\right)
+        (\omega^{b_{k+1}} - b_k^g)\delta t^2
+    }{\partial n_k^g}
+\]
+
+\[
+    = \frac{1}{4}
+    \frac{
+        R_{b_i b_{k+1}}
+        \left[
+            \frac{1}{2}\delta n_k^g \delta t
+        \right]_\times
+        (\omega^{b_{k+1}} - b_k^g)\delta t^2
+    }{n_k^g}
+\]
+\[
+    = -\frac{1}{4}
+    \frac{
+        R_{b_i b_{k+1}}
+        \left[
+        (\omega^{b_{k+1}} - b_k^g)\delta t^2    
+        \right]_\times
+        
+        \left(\frac{1}{2}\delta n_k^g \delta t\right)
+    }{n_k^g}
+\]
+\[
+    = -\frac{1}{4}
+        \left(R_{b_i b_{k+1}}
+        \left[
+        (\omega^{b_{k+1}} - b_k^g)   
+        \right]_\times
+        \delta t^2
+        \right)
+        
+        \left(\frac{1}{2} \delta t\right)
+\]
 <h2>3. </h2>
 
 \[
